@@ -1,4 +1,13 @@
 
+using Domain.RepoInterfaces;
+using Microsoft.EntityFrameworkCore;
+using Presistance;
+using Presistance.Data.Contexts;
+using Presistance.Repostires;
+using ServiceAbstraction;
+using ServiceImplementation;
+using ServiceImplementation.MappingProfiles;
+
 namespace E_CommerceApp
 {
     public class Program
@@ -7,16 +16,41 @@ namespace E_CommerceApp
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            #region Add services to the container
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // DbContext Registration
+            builder.Services.AddDbContext<StoreDbContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            // Data Seeding Registration
+            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+
+            //Unit of Work Registration
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Mapper Registration
+            builder.Services.AddAutoMapper(config => config.AddProfile(new ProductProfile()), typeof(AssemblyRefrence).Assembly);
+
+            // Service Manger Registration
+            builder.Services.AddScoped<IServiceManger,ServiceManger>();
+
+
+            #endregion
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            var Scope = app.Services.CreateScope();
+
+             var seed = Scope.ServiceProvider.GetRequiredService<IDataSeeding>();
+
+            seed.DataSeedAsync();
+
+            #region Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -25,11 +59,14 @@ namespace E_CommerceApp
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseAuthorization();
 
 
             app.MapControllers();
 
+            #endregion
             app.Run();
         }
     }

@@ -15,7 +15,7 @@ namespace Domain.Models.ProductModule
         public string PictureUrl { get; set; } = null!;
 
         public decimal Price { get; set; }
-        public int BradnId { get; set; } // FK
+        public int BrandId { get; set; } // FK
         public int TypeId { get; set; } // FK
         public ProductBrand ProductBrand { get; set; } = null!;
 
