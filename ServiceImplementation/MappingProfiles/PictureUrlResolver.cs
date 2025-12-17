@@ -2,13 +2,13 @@
 using AutoMapper.Execution;
 using Domain.Models.ProductModule;
 using Microsoft.Extensions.Configuration;
-using Shared.DataTransferObjects;
+using Shared.DataTransferObjects.ProductModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-    
+
 namespace ServiceImplementation.MappingProfiles
 {
     public class PictureUrlResolver(IConfiguration _configration) : IValueResolver<Product, ProductDto, string>

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Domain.Exceptions;
 using Domain.Models.ProductModule;
 using Domain.RepoInterfaces;
 using ServiceAbstraction;
 using ServiceImplementation.Specification;
 using Shared;
 using Shared.DataTransferObjects;
+using Shared.DataTransferObjects.ProductModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,14 +45,13 @@ namespace ServiceImplementation
             return _mapper.Map<IEnumerable<ProductType>, IEnumerable<TypeDto>>(types);
         }
 
-        public async Task<ProductDto?> GetProductByIdAsync(int id)
+        public async Task<ProductDto> GetProductByIdAsync(int id)
         {
             var repo = _unitOfWork.GetRepository<Product, int>();
             var specfication = new ProductWithBrandAndTypeSpecfications(id);
             var product =  await repo.GetByIdAsync(specfication);
             if (product == null)
-                return null;
-
+                throw new ProductNotFoundException(id);
             return _mapper.Map<Product, ProductDto>(product);   
         }
     }

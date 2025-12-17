@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ServiceAbstraction;
 using Shared;
 using Shared.DataTransferObjects;
+using Shared.DataTransferObjects.ProductModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +13,17 @@ namespace Presentation.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")] // baseUrl/api/Products
-    public class ProductsController(IServiceManger _serviceManger):ControllerBase
+    public class ProductsController(IServiceManger _serviceManger): ControllerBase
     {
         // Get All Products
         [HttpGet]
+        [Authorize]
         // GET: baseUrl/api/Products
 
         // Name Asc
         // Name Desc
         // Price Asc
         // Price Desc
-
 
         public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery]ProductQueryParams queryParams)
         { 
@@ -52,6 +54,5 @@ namespace Presentation.Controllers
             var types = await _serviceManger.ProductService.GetAllTypesAsync();
             return Ok(types);
         }
-
     }
 }

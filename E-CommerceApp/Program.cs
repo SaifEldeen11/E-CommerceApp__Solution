@@ -1,5 +1,10 @@
 
+using Azure;
 using Domain.RepoInterfaces;
+using E_CommerceApp.CustomMiddleWares;
+using E_CommerceApp.Extenstions;
+using E_CommerceApp.Factories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Presistance;
 using Presistance.Data.Contexts;
@@ -7,59 +12,53 @@ using Presistance.Repostires;
 using ServiceAbstraction;
 using ServiceImplementation;
 using ServiceImplementation.MappingProfiles;
+using Shared.ErrorModels;
+using System.Threading.Tasks;
 
 namespace E_CommerceApp
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             #region Add services to the container
 
             builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
 
-            // DbContext Registration
-            builder.Services.AddDbContext<StoreDbContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
+            builder.Services.AddSwaggerServices();
 
-            // Data Seeding Registration
-            builder.Services.AddScoped<IDataSeeding, DataSeeding>();
+            // Service Layer Registration
+            builder.Services.AddApplicationServices();
 
-            //Unit of Work Registration
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            // Presistance Layer Registration
+            builder.Services.AddInfrastructureServices(builder.Configuration);
 
-            // Mapper Registration
-            builder.Services.AddAutoMapper(config => config.AddProfile(new ProductProfile()), typeof(AssemblyRefrence).Assembly);
+            builder.Services.AddWebApplicationServices();
 
-            // Service Manger Registration
-            builder.Services.AddScoped<IServiceManger,ServiceManger>();
-
-
+            builder.Services.AddJWTServices(builder.Configuration);
             #endregion
+
+
             var app = builder.Build();
 
-            var Scope = app.Services.CreateScope();
-
-             var seed = Scope.ServiceProvider.GetRequiredService<IDataSeeding>();
-
-            seed.DataSeedAsync();
+            await app.SeedDataAsync();
 
             #region Configure the HTTP request pipeline.
+
+            app.UseCustomExceptionMiddleWare();
             if (app.Environment.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerMiddleWare();
             }
 
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseAuthorization();
 
@@ -67,6 +66,7 @@ namespace E_CommerceApp
             app.MapControllers();
 
             #endregion
+
             app.Run();
         }
     }

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.RepoInterfaces
+namespace Domain.Exceptions
 {
-    public interface IDataSeeding
+    public abstract class NotFoundException(string message): Exception(message)
     {
-        Task DataSeedAsync();
-        Task IdentityDataSeedAsync();
+
     }
 }

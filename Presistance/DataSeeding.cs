@@ -1,5 +1,7 @@
-﻿using Domain.Models.ProductModule;
+﻿using Domain.Models.IdentityModule;
+using Domain.Models.ProductModule;
 using Domain.RepoInterfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistance.Data.Contexts;
 using System;
@@ -11,7 +13,8 @@ using System.Threading.Tasks;
 
 namespace Presistance
 {
-    public class DataSeeding(StoreDbContext _dbContext) : IDataSeeding
+    public class DataSeeding(StoreDbContext _dbContext, UserManager<ApplicationUser> _userManager,
+        RoleManager<IdentityRole> _roleManager) : IDataSeeding
     {
 
         public async Task DataSeedAsync()
@@ -67,5 +70,47 @@ namespace Presistance
             }
 
         }
+
+        public async Task IdentityDataSeedAsync()
+        {
+            try
+            {
+                if (!_roleManager.Roles.Any())
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Admin"));
+                    await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
+                }
+
+                if (!_userManager.Users.Any())
+                {
+                    var user01 = new ApplicationUser
+                    {
+                        Email = "saif@gmail.com",
+                        DisplayName = "Saif Eldeen",
+                        UserName = "SaifEldeen",
+                        PhoneNumber = "01012345678",
+                    };
+                    var user02 = new ApplicationUser
+                    {
+                        Email = "salma@gmail.com",
+                        DisplayName = "Salma Mohamed",
+                        UserName = "SalmaMohamed",
+                        PhoneNumber = "01012345269",
+                    };
+
+                    await _userManager.CreateAsync(user01, "P@ssw0rd");
+                    await _userManager.CreateAsync(user02, "P@ssw0rd");
+
+                    await _userManager.AddToRoleAsync(user01, "SuperAdmin");
+                    await _userManager.AddToRoleAsync(user02, "Admin");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                // to do 
+            }
+        }
     }
+
 }

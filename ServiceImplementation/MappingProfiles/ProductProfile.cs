@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Models.ProductModule;
 using Shared.DataTransferObjects;
+using Shared.DataTransferObjects.ProductModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
