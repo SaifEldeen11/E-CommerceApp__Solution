@@ -10,6 +10,13 @@ namespace Domain.Models.BasketModule
     {
         public string Id { get; set; } // GUID , Created from the client [Front-End]
 
-        public List<BasketItem> Items { get; set; } = [];
+        public ICollection<BasketItem> Items { get; set; } = [];
+
+        public string? PaymentIntentId { get; set; }
+        public string? ClientSecret { get; set; }
+
+        public int? DeliveryMethodId { get; set; }
+
+        public decimal ShippingPrice { get; set; }
     }
 }

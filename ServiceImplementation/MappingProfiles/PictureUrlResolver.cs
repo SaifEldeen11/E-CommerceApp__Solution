@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ServiceImplementation.MappingProfiles
 {
-    public class PictureUrlResolver(IConfiguration _configration) : IValueResolver<Product, ProductDto, string>
+    public class PictureUrlResolver(IConfiguration _configuration) : IValueResolver<Product, ProductDto, string>
     {
         public string Resolve(Product source, ProductDto destination, string destMember, ResolutionContext context)
         {
@@ -20,7 +20,7 @@ namespace ServiceImplementation.MappingProfiles
                 return string.Empty;
             }
 
-            return $"{_configration.GetSection("Urls")["BaseUrl"]}{source.PictureUrl}";
+            return $"{_configuration.GetSection("Urls")["BaseUrl"]}{source.PictureUrl}";
         }
     }
 }

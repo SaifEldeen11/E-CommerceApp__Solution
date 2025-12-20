@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceAbstraction;
 using Shared.DataTransferObjects.IdentityModule;
 using System;
@@ -11,9 +12,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthenticationController(IServiceManger _serviceManger): ControllerBase
+    public class AuthenticationController(IServiceManger _serviceManger): ApiBaseController
     {
         // LogIn
         [HttpPost("Login")] // POST : baseUrl/api/Authentication/Login

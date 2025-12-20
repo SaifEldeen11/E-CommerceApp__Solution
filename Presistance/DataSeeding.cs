@@ -1,4 +1,5 @@
 ﻿using Domain.Models.IdentityModule;
+using Domain.Models.OrderModule;
 using Domain.Models.ProductModule;
 using Domain.RepoInterfaces;
 using Microsoft.AspNetCore.Identity;
@@ -61,6 +62,19 @@ namespace Presistance
                     }
                 }
                 #endregion
+
+                #region Delivery Methodes
+                if (!_dbContext.Set<DeliveryMethod>().Any())
+                {
+                    var DeliveryMethodData = File.OpenRead(@"C:\Users\merom\Desktop\RouteBackEnd\API\E-CommerceApp__Solution\Presistance\Data\DataSeed\delivery.json");
+                    var DeliveryMethod = await JsonSerializer.DeserializeAsync<List<DeliveryMethod>>(DeliveryMethodData);
+                    if (DeliveryMethod is not null && DeliveryMethod.Any())
+                    {
+                        await _dbContext.Set<DeliveryMethod>().AddRangeAsync(DeliveryMethod);
+                    }
+                }
+                #endregion
+
 
                 await _dbContext.SaveChangesAsync();
             }

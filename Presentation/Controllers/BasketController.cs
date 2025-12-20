@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using ServiceAbstraction;
 using Shared.DataTransferObjects.BasketModule;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Presentation.Controllers
 {
-    public class BasketController(IServiceManger _serviceManger) : ControllerBase
+    public class BasketController(IServiceManger _serviceManger) : ApiBaseController
     {
         // Get Basket 
         // GET : api/basket/GetBasket

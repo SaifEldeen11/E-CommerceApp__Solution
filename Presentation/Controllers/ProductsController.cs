@@ -1,9 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using Presentation.Attributes;
 using ServiceAbstraction;
 using Shared;
 using Shared.DataTransferObjects;
 using Shared.DataTransferObjects.ProductModule;
+using Shared.ErrorModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +15,11 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Presentation.Controllers
 {
-    [ApiController]
-    [Route("api/[Controller]")] // baseUrl/api/Products
-    public class ProductsController(IServiceManger _serviceManger): ControllerBase
+    public class ProductsController(IServiceManger _serviceManger): ApiBaseController
     {
         // Get All Products
         [HttpGet]
-        [Authorize]
+        [Cache(300)]
         // GET: baseUrl/api/Products
 
         // Name Asc
@@ -32,6 +34,8 @@ namespace Presentation.Controllers
         }
         // Get Product By Id
         [HttpGet("{id:int}")]
+        [ProducesResponseType(typeof(ProductDto),StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorToReturn),StatusCodes.Status404NotFound)]
         // GET: baseUrl/api/Products/id
         public async Task<ActionResult<ProductDto>> GetProduct(int id)
         {

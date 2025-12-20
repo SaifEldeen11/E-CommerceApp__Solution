@@ -37,6 +37,8 @@ namespace Presistance
 
             Services.AddScoped<IBasketRepository, BasketRepostiry>();
 
+            Services.AddScoped<ICacheRepository, CacheRepository>();
+
             Services.AddSingleton<IConnectionMultiplexer>((_) =>
             {
                 return  ConnectionMultiplexer.Connect(Configuration.GetConnectionString("RedisConnection"));

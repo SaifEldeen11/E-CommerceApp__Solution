@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace E_CommerceApp.Extenstions
@@ -12,7 +13,32 @@ namespace E_CommerceApp.Extenstions
         public static IServiceCollection AddSwaggerServices(this IServiceCollection Services)
         {
             Services.AddEndpointsApiExplorer();
-            Services.AddSwaggerGen();
+            Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    Description = "Enter Bearer followed by space and your token"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference = new OpenApiReference()
+                            {
+                                Id = "Bearer",
+                                Type = ReferenceType.SecurityScheme
+                            }
+                        },
+                        new string []{}
+                    }
+                });
+            });
             return Services;
         }
         public static IServiceCollection AddWebApplicationServices(this IServiceCollection Services)
